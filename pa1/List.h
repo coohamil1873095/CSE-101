@@ -1,6 +1,9 @@
 //-----------------------------------------------------------------------------
-// List.h
-// Header file for List ADT
+//  Connor Hamilton 
+//  coohamil 
+//  2023 Fall PA1
+//  List.h
+//  Header file for List ADT
 //-----------------------------------------------------------------------------
 #ifndef LIST_H_INCLUDE_
 #define LIST_H_INCLUDE_

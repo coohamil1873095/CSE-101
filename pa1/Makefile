@@ -1,4 +1,7 @@
 #------------------------------------------------------------------------------
+# Connor Hamilton 
+# coohamil 
+# 2023 Fall PA1
 # Makefile for CSE 101 Programming Assignment 1
 #
 # make                   makes Lex

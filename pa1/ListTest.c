@@ -1,6 +1,9 @@
 //-----------------------------------------------------------------------------
-// ListTest.c
-// Tests the List ADT
+//  Connor Hamilton 
+//  coohamil 
+//  2023 Fall PA1
+//  ListTest.c
+//  Tests the List ADT
 //-----------------------------------------------------------------------------
 #include<stdio.h>
 #include<stdlib.h>
