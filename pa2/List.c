@@ -1,15 +1,15 @@
 //-----------------------------------------------------------------------------
 //  Connor Hamilton 
 //  coohamil 
-//  2023 Fall PA1
+//  2023 Fall PA2
 //  List.h
 //  Implementation file for List ADT
 //-----------------------------------------------------------------------------
-#include<stdio.h>
-#include<stdlib.h>
-#include<stdbool.h>
-#include<assert.h>
-#include"List.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <assert.h>
+#include "List.h"
 
 // structs --------------------------------------------------------------------
 
