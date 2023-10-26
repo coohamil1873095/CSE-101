@@ -2,9 +2,9 @@
 //  Connor Hamilton 
 //  coohamil 
 //  2023 Fall PA3
-//  FindPath.c
-//  Perform a Breadth First Search on inputted source vertices and prints the shortest path to each inputted destination
-//  Uses two command line arguments in form: Lex <input file> <output file>
+//  FindComponents.c
+//  Performs a Depth First Search on inputted Graph/Transposed Graph and prints the strong components to the outfile
+//  Uses two command line arguments in form: FindComponents <input file> <output file>
 //-----------------------------------------------------------------------------
 #include <stdio.h>
 #include <stdlib.h>
@@ -92,30 +92,6 @@ int main(int argc, char * argv[]) {
         movePrev(S);
     }
         
-        /*
-        printf("%d\n", get(S));
-        if (!getParent(gT, get(S))) {
-            i += 1;
-        }
-        else {
-            moveFront(sccArr[i]);
-            while (index(sccArr[i]) >= 0) {
-                if (get(S) > get(sccArr[i])) {
-                    moveNext(sccArr[i]);
-                }
-                else {
-                    insertBefore(sccArr[i], get(S));
-                    break;
-                }
-            }
-            if (index(sccArr[i]) == -1) {
-                append(sccArr[i], get(S));
-            }
-        }
-        movePrev(S);
-        */
-    
-
     // print components
     for (i = 0; i < num; i++) {
         fprintf(out, "Component %d: ", i + 1);
