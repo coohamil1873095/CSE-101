@@ -10,7 +10,7 @@
 #include <stdbool.h>
 #include "List.h"
 
-#define INF -1        // Infinity (for negative int values)
+#define UNDEF -1        // Infinity (for negative int values)
 #define NIL 0         // Undefined vertex label (for non-positive int values)
 
 // Exported types -------------------------------------------------------------
@@ -42,6 +42,14 @@ int getParent(Graph G, int u);
 // or INF if BFS() has not yet been called
 // Pre: 1 ≤ 𝑢 ≤ getOrder(𝐺)
 int getDist(Graph G, int u);
+// Returns the discover time of vertex u in the DFS tree created by DFS(),
+// or INF if DFS() has not yet been called
+// Pre: 1 ≤ 𝑢 ≤ getOrder(𝐺)
+int getDiscover(Graph G, int u);
+// Returns the finish time of vertex u in the DFS tree created by DFS(),
+// or INF if DFS() has not yet been called
+// Pre: 1 ≤ 𝑢 ≤ getOrder(𝐺)
+int getFinish(Graph G, int u);
 // Appends to the List L the vertices of a shortest path in G from source to u,
 // or appends to L the value NIL if no such path exists
 // Pre: getSource(G)!=NIL, so BFS() must be called before getPath() is called
@@ -63,9 +71,18 @@ void addArc(Graph G, int u, int v);
 // Runs the BFS algorithm on the Graph G with source s,
 // setting the color, distance, parent, and source fields of G accordingly
 void BFS(Graph G, int s);
+// Runs the DFS algorithm on the Graph G with List S, which serves two purposes:
+    // First it defines the order in which vertices are to be processed in the main loop (5-7) of DFS
+    // Second, when DFS is complete, it will store the vertices by decreasing finish times (hence 𝑆 is considered to be a stack)
+// Pre: length(S)==getOrder(G)
+void DFS(Graph G, List S);
 
 // Other operations -----------------------------------------------------------
 
+// Returns a reference to a new graph object representing the transpose of G
+Graph transpose(Graph G);
+// Returns a reference to a new graph that is a copy of G
+Graph copyGraph(Graph G);
 // Prints the adjacency list representation of G to the file pointed to by out
 void printGraph(FILE* out, Graph G);
 
