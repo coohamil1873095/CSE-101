@@ -3,7 +3,7 @@
 //  coohamil 
 //  2023 Fall PA4
 //  Sparse.c
-//  
+//  Print result to output file the Matrix operations A, B, (1.5)A, A + B, A + A, B - A, A - A, A^T, AB, and B^2 given matrices A and B from the input file
 //  Uses two command line arguments in form: Sparse <input file> <output file>
 //-----------------------------------------------------------------------------
 #include <stdio.h>
