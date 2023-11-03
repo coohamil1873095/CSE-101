@@ -2,7 +2,7 @@
 //  Connor Hamilton 
 //  coohamil 
 //  2023 Fall PA4
-//  Graph.h
+//  Matrix.h
 //  Header file for Matrix ADT
 //-----------------------------------------------------------------------------
 #ifndef MATRIX_H_INCLUDE_
@@ -11,7 +11,7 @@
 #include "List.h"
 
 // Exported types -------------------------------------------------------------
-typedef struct MatrxObj* Matrix;
+typedef struct MatrixObj* Matrix;
 
 // Constructors-Destructors ---------------------------------------------------
 

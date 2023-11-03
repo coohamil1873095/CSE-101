@@ -9,10 +9,10 @@
 #define LIST_H_INCLUDE_
 #include <stdbool.h>
 
-#define FORMAT "%d"  // format string for ListElement
+#define FORMAT "%p"  // format string for ListElement
 
 // Exported types -------------------------------------------------------------
-typedef int ListElement;
+typedef void* ListElement;
 typedef struct ListObj* List;
 
 // Constructors-Destructors ---------------------------------------------------
@@ -25,14 +25,14 @@ void freeList(List* pL); // Frees all heap memory associated with *pL, and sets
 
 int length(List L); // Returns the number of elements in L.
 int index(List L); // Returns index of cursor element if defined, -1 otherwise.
-int front(List L); // Returns front element of L. Pre: length()>0
-int back(List L); // Returns back element of L. Pre: length()>0
-int get(List L); // Returns cursor element of L. Pre: length()>0, index()>=0
+ListElement front(List L); // Returns front element of L. Pre: length()>0
+ListElement back(List L); // Returns back element of L. Pre: length()>0
+ListElement get(List L); // Returns cursor element of L. Pre: length()>0, index()>=0
 
 // Manipulation procedures ----------------------------------------------------
 
 void clear(List L); // Resets L to its original empty state.
-void set(List L, int x); // Overwrites the cursor element’s data with x.
+void set(List L, ListElement x); // Overwrites the cursor element’s data with x.
  // Pre: length()>0, index()>=0
 void moveFront(List L); // If L is non-empty, sets cursor under the front element,
  // otherwise does nothing.
@@ -47,13 +47,13 @@ void moveNext(List L); // If cursor is defined and not at back, move cursor one
  // back, cursor becomes undefined; if cursor is undefined
  // do nothing
 
-void prepend(List L, int x); // Insert new element into L. If L is non-empty,
+void prepend(List L, ListElement x); // Insert new element into L. If L is non-empty,
  // insertion takes place before front element.
-void append(List L, int x); // Insert new element into L. If L is non-empty,
+void append(List L, ListElement x); // Insert new element into L. If L is non-empty,
  // insertion takes place after back element.
-void insertBefore(List L, int x); // Insert new element before cursor.
+void insertBefore(List L, ListElement x); // Insert new element before cursor.
  // Pre: length()>0, index()>=0
-void insertAfter(List L, int x); // Insert new element after cursor.
+void insertAfter(List L, ListElement x); // Insert new element after cursor.
  // Pre: length()>0, index()>=0
 void deleteFront(List L); // Delete the front element. Pre: length()>0
 void deleteBack(List L); // Delete the back element. Pre: length()>0

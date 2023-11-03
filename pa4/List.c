@@ -109,19 +109,19 @@ int index(List L) {
     return L->cursor ? L->index : -1;
 }
 // Returns front element of L. Pre: length()>0
-int front(List L) {
+ListElement front(List L) {
     checkExist(L, "front");
     checkLength(L, "front");
     return L->front->data;
 }
 // Returns back element of L. Pre: length()>0 
-int back(List L) {
+ListElement back(List L) {
     checkExist(L, "back");
     checkLength(L, "back");
     return L->back->data;
 }
 // Returns cursor element of L. Pre: length()>0, index()>=0 
-int get(List L) {
+ListElement get(List L) {
     checkExist(L, "get");
     checkLength(L, "get");
     checkIndex(L, "get");
@@ -147,7 +147,7 @@ void clear(List L) {
 }
 // Overwrites the cursor element’s data with x.
  // Pre: length()>0, index()>=0
-void set(List L, int x) {
+void set(List L, ListElement x) {
     checkExist(L, "set");
     checkLength(L, "set");
     checkIndex(L, "set");
@@ -207,7 +207,7 @@ void moveNext(List L) {
 }
 // Insert new element into L. If L is non-empty,
  // insertion takes place before front element.
-void prepend(List L, int x) {
+void prepend(List L, ListElement x) {
     checkExist(L, "prepend");
     Node N = newNode(x);
     if (L->length == 0) {
@@ -224,7 +224,7 @@ void prepend(List L, int x) {
 }
 // Insert new element into L. If L is non-empty,
  // insertion takes place after back element. 
-void append(List L, int x) {
+void append(List L, ListElement x) {
     checkExist(L, "append");
     Node N = newNode(x);
     if (L->length == 0) {
@@ -240,7 +240,7 @@ void append(List L, int x) {
 }
 // Insert new element before cursor.
  // Pre: length()>0, index()>=0
-void insertBefore(List L, int x) {
+void insertBefore(List L, ListElement x) {
     checkExist(L, "insertBefore");
     checkLength(L, "insertBefore");
     checkIndex(L, "insertBefore");
@@ -261,7 +261,7 @@ void insertBefore(List L, int x) {
 }
 // Insert new element after cursor.
  // Pre: length()>0, index()>=0 
-void insertAfter(List L, int x) {
+void insertAfter(List L, ListElement x) {
     checkExist(L, "insertAfter");
     checkLength(L, "insertAfter");
     checkIndex(L, "insertAfter");
@@ -379,8 +379,13 @@ List concatList(List A, List B) {
         printf("List Error: calling concatList() on NULL List reference\n");
         exit(EXIT_FAILURE);
     }
-    List newL = copyList(A);
-    Node temp = B->front;
+    List newL = newList();
+    Node temp = A->front;
+    while (temp) {
+        append(newL, temp->data);
+        temp = temp->next;
+    }
+    temp = B->front;
     while (temp) {
         append(newL, temp->data);
         temp = temp->next;
