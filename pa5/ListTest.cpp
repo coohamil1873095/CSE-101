@@ -17,12 +17,16 @@ int main(){
    int i, n=10;
    List A, B, C, D;
 
+   cout << "created lists" << endl;
+
    for(i=1; i<=n; i++){
       A.insertAfter(i);
       B.insertAfter(11-i);
       C.insertBefore(i);
       D.insertBefore(11-i);
    }
+
+   cout << "inserted" << endl;
 
    cout << endl;
    cout << "A = " << A << endl;
@@ -39,6 +43,8 @@ int main(){
    B.moveBack();
    C.moveFront();
    D.moveFront();
+
+   cout << "moved" << endl;
 
    cout << "A = " << A << endl;
    cout << "A.position() = " << A.position() << endl;
@@ -71,6 +77,7 @@ int main(){
    cout << B.findNext(5) << endl;
    cout << B << endl;
    B.eraseBefore();
+   cout << B << endl;
    B.eraseAfter();
    cout << B << endl;
    cout << B.position() << endl;

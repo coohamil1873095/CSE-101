@@ -10,8 +10,6 @@
 #include<stdexcept>
 #include"List.h"
 
-using namespace std;
-
 // Node constructor
 List::Node::Node(ListElement x) {
     data = x;
@@ -22,28 +20,32 @@ List::Node::Node(ListElement x) {
     
 // Creates new List in the empty state.
 List::List() {
-    frontDummy = nullptr;
-    backDummy = nullptr;
-    beforeCursor = nullptr;
-    afterCursor = nullptr;
+    frontDummy = new Node(0);
+    backDummy = new Node(0);
+    beforeCursor = frontDummy;
+    afterCursor = backDummy;
     num_elements = 0;
     pos_cursor = 0;
+    frontDummy->next = backDummy;
+    backDummy->prev = frontDummy;
 }
 
 // Copy constructor.
 List::List(const List& L) {
     // make this an empty List
-    frontDummy = nullptr;
-    backDummy = nullptr;
-    beforeCursor = nullptr;
-    afterCursor = nullptr;
+    frontDummy = new Node(0);
+    backDummy = new Node(0);
+    beforeCursor = frontDummy;
+    afterCursor = backDummy;
     num_elements = 0;
     pos_cursor = 0;
+    frontDummy->next = backDummy;
+    backDummy->prev = frontDummy;
 
     // load elements of L into this List
-    Node* N = L.backDummy;
-    while( N!=nullptr ){
-        this->insertAfter(N->data);
+    Node* N = L.backDummy->prev;
+    while (N != L.frontDummy) {
+        insertAfter(N->data);
         N = N->prev;
     }
     // std::cout << "***called copy constructor: " << this->to_string() << std::endl;
@@ -52,8 +54,8 @@ List::List(const List& L) {
 // Destructor
 List::~List() {
     clear();
-    frontDummy = nullptr;
-    backDummy = nullptr;
+    delete frontDummy;
+    delete backDummy;
 }
 
 
@@ -69,20 +71,20 @@ int List::length() const {
 // Returns the front element in this List.
 // pre: length()>0
 ListElement List::front() const {
-    if( num_elements == 0 ){
+    if (num_elements == 0) {
         throw std::length_error("List: front(): empty List");
     }
-    return frontDummy->data;
+    return frontDummy->next->data;
 }
 
 // back()
 // Returns the back element in this List.
 // pre: length()>0
 ListElement List::back() const {
-    if( num_elements == 0 ){
+    if (num_elements == 0) {
         throw std::length_error("List: back(): empty List");
     }
-    return backDummy->data;
+    return backDummy->prev->data;
 }
 
 // position()
@@ -95,30 +97,20 @@ int List::position() const {
 // Returns the element after the cursor.
 // pre: position()<length()
 ListElement List::peekNext() const {
-    if( pos_cursor >= num_elements ){
-        throw std::length_error("List: peekNext(): invalid cursor position");
+    if (pos_cursor >= num_elements) {
+        throw std::range_error("List: peekNext(): cursor at back");
     }
-
-    Node* N = frontDummy;
-    for (int i = 0; i < pos_cursor; i++) {
-        N = N->next;
-    }
-    return N->data;
+    return afterCursor->data;
 }
 
 // peekPrev()
 // Returns the element before the cursor.
 // pre: position()>0
 ListElement List::peekPrev() const {
-    if( pos_cursor == 0 ){
-        throw std::length_error("List: peekPrev(): invalid cursor position");
+    if (pos_cursor == 0) {
+        throw std::range_error("List: peekPrev(): cursor at front");
     }
-
-    Node* N = frontDummy;
-    for (int i = 0; i < pos_cursor - 1; i++) {
-        N = N->next;
-    }
-    return N->data;
+    return beforeCursor->data;
 }
 
 
@@ -127,19 +119,35 @@ ListElement List::peekPrev() const {
 // clear()
 // Deletes all elements in this List, setting it to the empty state.
 void List::clear() {
-
+    if (num_elements == 0) {
+        return;
+    }
+    Node* curr = frontDummy->next;
+    Node* prev = curr;
+    while (curr != backDummy) {
+        prev = curr;
+        curr = curr->next;
+        delete prev;
+    }
+    beforeCursor = frontDummy;
+    afterCursor = backDummy;
+    pos_cursor = num_elements = 0;
 }
 
 // moveFront()
 // Moves cursor to position 0 in this List.
 void List::moveFront() {
-
+    pos_cursor = 0;
+    afterCursor = frontDummy->next;;
+    beforeCursor = frontDummy;
 }
 
 // moveBack()
 // Moves cursor to position length() in this List.
 void List::moveBack() {
-
+    pos_cursor = num_elements;
+    afterCursor = backDummy;
+    beforeCursor = backDummy->prev;
 }
 
 // moveNext()
@@ -147,7 +155,13 @@ void List::moveBack() {
 // was passed over. 
 // pre: position()<length() 
 ListElement List::moveNext() {
-
+    if (pos_cursor >= num_elements) {
+        throw std::range_error("List: moveNext(): cursor at back");
+    }
+    pos_cursor += 1;
+    afterCursor = afterCursor->next;
+    beforeCursor = beforeCursor->next;
+    return beforeCursor->data;
 }
 
 // movePrev()
@@ -155,47 +169,99 @@ ListElement List::moveNext() {
 // was passed over. 
 // pre: position()>0
 ListElement List::movePrev() {
-
+    if (pos_cursor == 0) {
+        throw std::range_error("List: movePrev(): cursor at front");
+    }
+    pos_cursor -= 1;
+    afterCursor = afterCursor->prev;
+    beforeCursor = beforeCursor->prev;
+    return afterCursor->data;
 }
 
 // insertAfter()
 // Inserts x after cursor.
 void List::insertAfter(ListElement x) {
+    Node* N = new Node(x);
+    N->prev = beforeCursor;
+    N->next = afterCursor;
 
+    if (pos_cursor == 0) { 
+        frontDummy->next = N;
+    }
+    else {
+        beforeCursor->next = N;
+    }
+    afterCursor->prev = N;
+    afterCursor = N;
+    num_elements += 1;
 }
 
 // insertBefore()
 // Inserts x before cursor.
 void List::insertBefore(ListElement x) {
+    Node* N = new Node(x);
+    N->prev = beforeCursor;
+    N->next = afterCursor;
 
+    if (pos_cursor == num_elements) { 
+        backDummy->prev = N;
+    }
+    else {
+        afterCursor->prev = N;
+    }
+    beforeCursor->next = N; 
+    beforeCursor = N;
+    num_elements += 1;
+    pos_cursor += 1;
 }
 
 // setAfter()
 // Overwrites the List element after the cursor with x.
 // pre: position()<length()
 void List::setAfter(ListElement x) {
-
+    if( pos_cursor >= num_elements ){
+        throw std::range_error("List: peekPrev(): cursor at back");
+    }
+    afterCursor->data = x;
 }
 
 // setBefore()
 // Overwrites the List element before the cursor with x.
 // pre: position()>0
 void List::setBefore(ListElement x) {
-
+    if( pos_cursor == 0 ){
+        throw std::range_error("List: peekPrev(): cursor at front");
+    }
+    beforeCursor->data = x;
 }
 
 // eraseAfter()
 // Deletes element after cursor.
 // pre: position()<length()
 void List::eraseAfter() {
-
+    if( pos_cursor >= num_elements ){
+        throw std::range_error("List: peekPrev(): cursor at back");
+    }
+    afterCursor->next->prev = beforeCursor;
+    beforeCursor->next = afterCursor->next;
+    delete afterCursor;
+    afterCursor = beforeCursor->next;
+    num_elements -= 1;
 }
 
 // eraseBefore()
 // Deletes element before cursor.
 // pre: position()>0
 void List::eraseBefore() {
-
+    if( pos_cursor == 0 ){
+        throw std::range_error("List: peekPrev(): cursor at front");
+    }
+    beforeCursor->prev->next = afterCursor;
+    afterCursor->prev = beforeCursor->prev;
+    delete beforeCursor;
+    beforeCursor = afterCursor->prev;
+    num_elements -= 1;
+    pos_cursor -= 1;
 }
 
 
@@ -208,7 +274,17 @@ void List::eraseBefore() {
 // returns the final cursor position. If x is not found, places the cursor 
 // at position length(), and returns -1. 
 int List::findNext(ListElement x) {
-
+    int ret = -1;
+    while (afterCursor != backDummy) {
+        pos_cursor += 1;
+        afterCursor = afterCursor->next;
+        beforeCursor = beforeCursor->next;
+        if (beforeCursor->data == x) {
+            ret = pos_cursor;
+            break;
+        }
+    }
+    return ret;
 }
 
 // findPrev()
@@ -218,7 +294,17 @@ int List::findNext(ListElement x) {
 // returns the final cursor position. If x is not found, places the cursor 
 // at position 0, and returns -1. 
 int List::findPrev(ListElement x) {
-
+    int ret = -1;
+    while (beforeCursor != frontDummy) {
+        pos_cursor -= 1;
+        afterCursor = afterCursor->prev;
+        beforeCursor = beforeCursor->prev;
+        if (afterCursor->data == x) {
+            ret = pos_cursor;
+            break;
+        }
+    }
+    return ret;
 }
 
 // cleanup()
@@ -228,7 +314,37 @@ int List::findPrev(ListElement x) {
 // is not moved with respect to the retained elements, i.e. it lies between 
 // the same two retained elements that it did before cleanup() was called.
 void List::cleanup() {
-
+    Node* N = frontDummy->next;
+    int pass = 0;
+    while (N != backDummy) {
+        Node* M = N->next;
+        Node* delN = nullptr;
+        int index = pass + 1;
+        while (M != backDummy) {
+            delN = M;
+            M = M->next;
+            if (delN->data == N->data) {
+                delN->prev->next = delN->next;
+                delN->next->prev = delN->prev;
+                delete delN;
+                num_elements -= 1;
+                if (index < pos_cursor) {
+                    pos_cursor -= 1;
+                    if (index == pos_cursor - 1) {
+                        beforeCursor = M->prev;
+                        beforeCursor->next = M;
+                    }
+                }
+                else if (index == pos_cursor) {
+                    afterCursor = M;
+                    afterCursor->prev = M->prev;
+                }
+            }
+            index += 1;
+        }
+        N = N->next;
+        pass += 1;
+    }
 }
     
 // concat()
@@ -236,13 +352,13 @@ void List::cleanup() {
 // the elements of L. The cursor in the returned List will be at postion 0.
 List List::concat(const List& L) const {
     List J;
-    Node* N = this->backDummy;
-    Node* M = L.backDummy;
-    while( M!=nullptr ){
+    Node* N = backDummy->prev;
+    Node* M = L.backDummy->prev;
+    while (M != L.frontDummy) {
         J.insertAfter(M->data);
         M = M->prev;
     }
-    while( N!=nullptr ){
+    while (N != frontDummy) {
         J.insertAfter(N->data);
         N = N->prev;
     }
@@ -253,14 +369,37 @@ List List::concat(const List& L) const {
 // Returns a string representation of this List consisting of a comma 
 // separated sequence of elements, surrounded by parentheses.
 std::string List::to_string() const {
+    std::string s = "(";
+    Node* N = frontDummy->next;
+    if (N != backDummy) {
+        s += std::to_string(N->data);
+        N = N->next;
+    }
 
+    while (N != backDummy) {
+        s += ", " + std::to_string(N->data);
+        N = N->next;
+    }
+    s += ")";
+
+    return s;
 }
 
 // equals()
 // Returns true if and only if this List is the same integer sequence as R.
 // The cursors in this List and in R are unchanged.
 bool List::equals(const List& R) const {
+    bool eq = (this->num_elements == R.num_elements);
+    Node* N = frontDummy;
+    Node* M = R.frontDummy;
 
+    while (eq && N != nullptr) {
+        eq = (N->data == M->data);
+        N = N->next;
+        M = M->next;
+    }
+
+    return eq;
 }
 
 
@@ -287,9 +426,9 @@ List& List::operator=( const List& L ) {
         List temp = L;
 
         // then swap the copy's fields with fields of this
-        swap(frontDummy, temp.frontDummy);
-        swap(backDummy, temp.backDummy);
-        swap(num_elements, temp.num_elements);
+        std::swap(frontDummy->next, temp.frontDummy->next);
+        std::swap(backDummy->prev, temp.backDummy->prev);
+        std::swap(num_elements, temp.num_elements);
     }
 
     // return this with the new data installed
