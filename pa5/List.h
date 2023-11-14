@@ -3,10 +3,7 @@
 //  coohamil 
 //  2023 Fall PA5
 //  List.h
-//  Header file for List ADT. List is a double ended queue with a vertical
-//  cursor standing between elements. The cursor position is always defined
-//  to be an int in the range 0 (at front) to length of List (at back).
-//  An empty list consists of the vertical cursor only, with no elements.
+//  Header file for List ADT 
 //-----------------------------------------------------------------------------
 #include<iostream>
 #include<string>

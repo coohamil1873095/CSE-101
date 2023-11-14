@@ -14,14 +14,15 @@
 List::Node::Node(ListElement x) {
     data = x;
     next = nullptr;
+    prev = nullptr;
 }
 
 // Class Constructors & Destructors ----------------------------------------
     
 // Creates new List in the empty state.
 List::List() {
-    frontDummy = new Node(0);
-    backDummy = new Node(0);
+    frontDummy = new Node(-1);
+    backDummy = new Node(-1);
     beforeCursor = frontDummy;
     afterCursor = backDummy;
     num_elements = 0;
@@ -33,12 +34,11 @@ List::List() {
 // Copy constructor.
 List::List(const List& L) {
     // make this an empty List
-    frontDummy = new Node(0);
-    backDummy = new Node(0);
+    frontDummy = new Node(-1);
+    backDummy = new Node(-1);
     beforeCursor = frontDummy;
     afterCursor = backDummy;
-    num_elements = 0;
-    pos_cursor = 0;
+    num_elements = pos_cursor = 0;
     frontDummy->next = backDummy;
     backDummy->prev = frontDummy;
 
@@ -48,7 +48,6 @@ List::List(const List& L) {
         insertAfter(N->data);
         N = N->prev;
     }
-    // std::cout << "***called copy constructor: " << this->to_string() << std::endl;
 }
 
 // Destructor
@@ -131,6 +130,8 @@ void List::clear() {
     }
     beforeCursor = frontDummy;
     afterCursor = backDummy;
+    frontDummy->next = backDummy;
+    backDummy->prev = frontDummy;
     pos_cursor = num_elements = 0;
 }
 
@@ -329,11 +330,12 @@ void List::cleanup() {
                 delete delN;
                 num_elements -= 1;
                 if (index < pos_cursor) {
-                    pos_cursor -= 1;
                     if (index == pos_cursor - 1) {
                         beforeCursor = M->prev;
                         beforeCursor->next = M;
                     }
+                    pos_cursor -= 1;
+                    index -= 1;
                 }
                 else if (index == pos_cursor) {
                     afterCursor = M;
@@ -389,15 +391,17 @@ std::string List::to_string() const {
 // Returns true if and only if this List is the same integer sequence as R.
 // The cursors in this List and in R are unchanged.
 bool List::equals(const List& R) const {
-    bool eq = (this->num_elements == R.num_elements);
-    Node* N = frontDummy;
-    Node* M = R.frontDummy;
+    bool eq = (num_elements == R.num_elements);
+    Node* N = frontDummy->next;
+    Node* M = R.frontDummy->next;
 
-    while (eq && N != nullptr) {
+    while (eq && N != backDummy && M != R.backDummy) {
         eq = (N->data == M->data);
         N = N->next;
         M = M->next;
     }
+
+    eq = eq && (N == this->backDummy) && (M == R.backDummy);
 
     return eq;
 }
@@ -422,17 +426,19 @@ bool operator==( const List& A, const List& B ) {
 // Overwrites the state of this List with state of L.
 List& List::operator=( const List& L ) {
     if( this != &L ){ // not self assignment
-        // make a copy of Q
-        List temp = L;
+        clear();
 
-        // then swap the copy's fields with fields of this
-        std::swap(frontDummy->next, temp.frontDummy->next);
-        std::swap(backDummy->prev, temp.backDummy->prev);
-        std::swap(num_elements, temp.num_elements);
+        Node* N = L.backDummy->prev;
+        while (N != L.frontDummy) {
+            insertAfter(N->data);
+            N = N->prev;
+        }
+
+        beforeCursor = frontDummy;
+        afterCursor = frontDummy->next;
+        pos_cursor = 0;
     }
 
     // return this with the new data installed
     return *this;
-
-    // the copy, if there is one, is deleted upon return
 }

@@ -2,7 +2,7 @@
 #  Makefile for List ADT
 #
 #  make                makes Shuffle
-#  make ListTest     make ListTest
+#  make ListTest       make ListTest
 #  make clean          removes binary files
 #  make check1         runs valgrind on ListTest
 #  make check2         runs valgrind on Shuffle with CLA 35
