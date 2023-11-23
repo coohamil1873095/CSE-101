@@ -10,6 +10,7 @@
 #include<string>
 #include<stdexcept>
 #include"List.h"
+#include "BigInteger.h"
 
 
 int main(int argc, char * argv[]){
@@ -35,9 +36,44 @@ int main(int argc, char * argv[]){
         return(EXIT_FAILURE);
     }
     
-    
+    std::string line1;
+    std::getline(in, line1);
+
+    std::string dummy;
+    std::getline(in, dummy);
+
+    std::string line2;
+    std::getline(in, line2);
+
+    BigInteger A(line1);
+    BigInteger B(line2);
+
+    out << A << std::endl;
+    out << std::endl;
+    out << B << std::endl;
+    out << std::endl;
+    out << A + B << std::endl;
+    out << std::endl;
+    out << A - B << std::endl;
+    out << std::endl;
+    out << A - A << std::endl;
+    out << std::endl;
+    out << 3*A - 2*B << std::endl;
+    out << std::endl;
+    out << A*B << std::endl;
+    out << std::endl;
+    out << A*A << std::endl;
+    out << std::endl;
+    out << B*B << std::endl;
+    out << std::endl;
+    out << 9*(A*A*A*A) + 16*(B*B*B*B*B) << std::endl;
+    out << std::endl;
 
     
+
+    // close files 
+    in.close();
+    out.close();
 
     return(EXIT_SUCCESS);
 
