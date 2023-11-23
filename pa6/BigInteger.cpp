@@ -12,8 +12,8 @@
 #include "BigInteger.h"
 
 // global constants
-ListElement base = 100;     // 1000000000
-int power = 2;            // 9
+ListElement base = 1000000000;     // 1000000000
+int POWER = 9;            // 9
 
 // Class Constructors & Destructors ----------------------------------------
 
@@ -59,6 +59,7 @@ BigInteger::BigInteger(std::string s) {
     std::string nums = "";
     int pos = 0;
     int offset = 0;
+    signum = 0;
 
     if (s[0] == '+' || s[0] == '-') {
         signum = (s[0] == '+') ? 1 : -1;
@@ -83,8 +84,6 @@ BigInteger::BigInteger(std::string s) {
     if (temp != 0) { offset = 0; }
 
     for (int i = s.length() - 1; i >= 0 + offset; i--) {
-        //std::cout << s[i];
-        
         // invalid character
         if (!isdigit(s[i])) {
             throw std::invalid_argument("BigInteger: Constructor: non-numeric string");
@@ -96,7 +95,7 @@ BigInteger::BigInteger(std::string s) {
         }
 
         // cutoff for inserting into digits
-        if (pos == power) {
+        if (pos == POWER) {
             long x = stol(nums);
             digits.insertAfter(x);
 
@@ -110,10 +109,10 @@ BigInteger::BigInteger(std::string s) {
         long x = stol(nums);
         digits.insertBefore(x);
     }
-    // set signum if haven't already
+    // set sign if haven't already
     if (signum != -1) { signum = 1; }
 
-    std::cout << digits << std::endl;
+    
 }
 
 // BigInteger()
@@ -216,9 +215,6 @@ void sumList(List& S, List A, List B, int sgn) {
         }
         S.eraseBefore();
     }
-
-
-    // std::cout << S << std::endl;
 }
 
 // normalizeList()
@@ -265,9 +261,6 @@ int normalizeList(List& L) {
     if (L.position() == L.length()) { 
         return 0; 
     }
-
-    // std::cout << L << std::endl;
-    // std::cout << "sign: " << sign << std::endl;
 
     return ((sign >= 0) ? 1 : -1);
 }
@@ -316,8 +309,6 @@ BigInteger BigInteger::add(const BigInteger& N) const {
         sumList(sum, digits, N_L, N.signum);
         ret.signum = normalizeList(sum);
     }
-    
-    //std::cout << ret.signum << std::endl;
 
     return ret;
 }
@@ -353,9 +344,6 @@ BigInteger BigInteger::sub(const BigInteger& N) const {
         negateList(diff);
         ret.signum = normalizeList(diff);
     }
-
-    //std::cout << ret.digits << std::endl;
-    //std::cout << ret.signum << std::endl;
     
     return ret;
 }
@@ -367,7 +355,7 @@ BigInteger BigInteger::mult(const BigInteger& N) const {
 
     // set resulting sign
     if (signum == 0 || N.signum == 0) { return ret; }
-    if (signum == -1 || N.signum == -1) { ret.signum = -1; }
+    if ((signum == -1 && N.signum == 1) || (signum == 1 && N.signum == -1)) { ret.signum = -1; }
     else { ret.signum = 1; }
 
     List& sum = ret.digits;
@@ -377,36 +365,20 @@ BigInteger BigInteger::mult(const BigInteger& N) const {
 
     N_L.moveBack();
 
-    // std::cout << digits << std::endl;
-    // std::cout << N.digits << std::endl;
-    // std::cout << "length: " << digits.length() << std::endl;
-
     for (int i = 0; i < N_L.length(); i++) {
-        
+        // scalar, shift, sum, then normalize
         copyL = digits;
-        
         scalarMultList(copyL, N_L.peekPrev());
-
         copyL.moveBack();
         for (int j = 0; j < shift; j++) {
             copyL.insertBefore(0);
         }
-
-        //std::cout << "scalar: " << copyL << std::endl;
-
         sumList(sum, sum, copyL, 1);
-
-        //std::cout << "sum: " << sum << std::endl;
-
         normalizeList(sum);
-
-        //std::cout << "normalize: " << sum << std::endl;
 
         shift += 1;
         N_L.movePrev();
     }
-
-    //std::cout << ret.digits << std::endl;
 
     return ret;
 }
@@ -430,7 +402,7 @@ std::string BigInteger::to_string() {
     digits.moveFront();
     while (digits.position() < digits.length()) {
         long x = digits.peekNext();
-        int len = power - std::to_string(x).length();
+        int len = POWER - std::to_string(x).length();
         // insert leading zeros
         if (digits.position() != 0 && len != 0) {
             for (int i = 0; i < len; i++) {
