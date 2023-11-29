@@ -2,7 +2,7 @@
 // Connor Hamilton
 // coohamil 
 // 2023 Fall PA7
-// DictionaryClient.cpp
+// DictionaryTest.cpp
 // A test client for the Dictionary ADT
 //-----------------------------------------------------------------------------
 #include<iostream>
@@ -65,13 +65,22 @@ int main(){
 
    cout << endl;
 
-   // insert some pairs into A
+   cout << "inserting" << endl;
+
+   // insert some pairs into A   26
    for(int i=0; i<26; i++){
       A.setValue(S[i], i+1);
    }
+
+   cout << "copy" << endl;
    
    // call operator=()
    B = A;
+
+   //cout << "A pre string: " << endl << A.pre_string() << endl;
+   //cout << "B pre string: " << endl << B.pre_string() << endl;
+
+   cout << "sizes" << endl;
 
    cout << "A.size() = " << A.size() << endl  << A << endl;
    cout << "B.size() = " << B.size() << endl  << B << endl;

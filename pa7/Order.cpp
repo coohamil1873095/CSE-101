@@ -35,8 +35,22 @@ int main(int argc, char * argv[]){
         return(EXIT_FAILURE);
     }
 
+    Dictionary D;
+    std::string line = "";
+    int lineNum = 1;
 
+    // loop through each line and put in dictionary
+    while (getline(in, line)) {
+        D.setValue(line, lineNum);
+        lineNum += 1;
+    }
+    
+    out << D << std::endl;
+    out << D.pre_string() << std::endl;
 
+    // close files 
+    in.close();
+    out.close();
 
     return(EXIT_SUCCESS);
 
